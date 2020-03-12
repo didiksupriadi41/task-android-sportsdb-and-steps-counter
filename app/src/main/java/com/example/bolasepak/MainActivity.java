@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
 import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -13,12 +15,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
@@ -54,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
             startForegroundService(intent);
         }
         registerReceiver(broadcastReceiver, new IntentFilter("com.example.bolasepak.mybroadcast"));
-
     }
 
     private boolean isServiceRunning(Class<?> serviceClass){
@@ -76,11 +79,14 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
+
     private void updateViews(Intent intent) {
         // retrieve data out of the intent.
         countedStep = intent.getStringExtra("Counted_Step");
         Log.d("COUNTEDSTEPPPPP", String.valueOf(countedStep));
         stepCountTV.setText(String.valueOf(countedStep));
     }
+
 
 }
