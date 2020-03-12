@@ -3,7 +3,11 @@ package com.example.bolasepak;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -20,14 +24,14 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity {
+    private Context context;
     private RecyclerView recycler;
     private ArrayList<SoccerMatch> list = new ArrayList<>();
 
-    TextView steps;
-    SensorManager sensorManager;
-    Sensor stepCounter;
-    boolean running = false;
+    private Intent intent;
+    TextView stepCountTV;
+    String countedStep;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,54 +47,40 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         cardViewAdapter.setListMatch(list);
         recycler.setAdapter(cardViewAdapter);
 
-        steps = findViewById(R.id.stepInfo);
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        stepCounter = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_DETECTOR);
-
-//        if(ContextCompat.checkSelfPermission(this,
-//                Manifest.permission.ACTIVITY_RECOGNITION) == PackageManager.PERMISSION_DENIED){
-//            //ask for permission
-//            requestPermissions(new String[]{Manifest.permission.ACTIVITY_RECOGNITION}, PHYISCAL_ACTIVITY);
-//        }
-    }
-
-    @Override
-    protected void onResume(){
-        super.onResume();
-        running = true;
-//        Sensor countSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER);
-        if(stepCounter!=null){
-            sensorManager.registerListener(this,stepCounter,SensorManager.SENSOR_DELAY_FASTEST);
-            Toast.makeText(this, "Sensor found!", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Sensor not found!", Toast.LENGTH_SHORT).show();
+        stepCountTV = findViewById(R.id.stepInfo);
+        intent = new Intent(this, StepCounterService.class);
+        Log.d("SENSORAVAILABLE", String.valueOf(isServiceRunning(StepCounterService.class)));
+        if(!isServiceRunning(StepCounterService.class)){
+            startForegroundService(intent);
         }
+        registerReceiver(broadcastReceiver, new IntentFilter("com.example.bolasepak.mybroadcast"));
+
     }
 
-    @Override
-    protected void onPause(){
-        super.onPause();
-        running = false;
-//        sensorManager.unregisterListener(this);
-    }
-
-    @Override
-    protected void onStop(){
-        super.onStop();
-        sensorManager.unregisterListener(this,stepCounter);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        Log.d("STATUS BOI", String.valueOf(running));
-        if(running){
-            Log.d("SENSORRRS", String.valueOf(event.values[0]));
-            steps.setText(String.valueOf(event.values[0]));
+    private boolean isServiceRunning(Class<?> serviceClass){
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for(ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
+            if(serviceClass.getName().equals(service.service.getClassName())){
+                return true;
+            }
         }
+        return false;
     }
 
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("BroadcastReceiver", "Received");
+            // call updateUI passing in our intent which is holding the data to display.
+            updateViews(intent);
+        }
+    };
 
+    private void updateViews(Intent intent) {
+        // retrieve data out of the intent.
+        countedStep = intent.getStringExtra("Counted_Step");
+        Log.d("COUNTEDSTEPPPPP", String.valueOf(countedStep));
+        stepCountTV.setText(String.valueOf(countedStep));
     }
+
 }

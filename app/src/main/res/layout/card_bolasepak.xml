@@ -40,7 +40,7 @@
 
     <!--Mid-->
     <LinearLayout
-        android:layout_width="150dp"
+        android:layout_width="170dp"
         android:layout_height="wrap_content"
         android:layout_marginVertical="20dp"
         android:gravity="center_horizontal"
@@ -68,7 +68,7 @@
 
             <TextView
                 android:id="@+id/score1"
-                android:layout_width="5dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
@@ -85,11 +85,11 @@
                 android:gravity="center_horizontal"
                 android:text="VS"
                 android:textColor="#424874"
-                android:textSize="18sp" />
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/score2"
-                android:layout_width="5dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_horizontal"
