@@ -6,6 +6,11 @@ import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.content.res.Configuration;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -25,6 +30,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private RecyclerView recycler;
     private ArrayList<SoccerMatch> list = new ArrayList<>();
+    
+    private SQLiteDatabase mydatabase;
 
     private Intent intent;
     TextView stepCountTV;
@@ -59,6 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         recycler = findViewById(R.id.recycler_view);
         recycler.setHasFixedSize(true);
+        recycler.setLayoutManager(new LinearLayoutManager(this));
 
         int orientation = getResources().getConfiguration().orientation; //check whether is it portrait or landscape
         int col = 1;
@@ -82,6 +92,10 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         registerReceiver(broadcastReceiver, new IntentFilter("com.example.bolasepak.mybroadcast"));
+        mydatabase = openOrCreateDatabase("Team",MODE_PRIVATE,null);
+        mydatabase.execSQL("CREATE TABLE IF NOT EXISTS SubscribedTeam(Team_ID VARCHAR);");
+        mydatabase.execSQL("INSERT INTO SubscribedTeam VALUES(133602);");
+        showAllSubcription();
     }
 
     private boolean isServiceRunning(Class<?> serviceClass){
@@ -193,5 +207,91 @@ public class MainActivity extends AppCompatActivity {
                 }
                 );
         MySingleton.getInstance(this).addToRequestQueue(request);
+    }
+        public void fetchData(String url){
+        final ArrayList<String> list = new ArrayList<>();
+        JsonObjectRequest request = new JsonObjectRequest
+                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            Log.d("JSON", "contoh");
+                            JSONArray pastEvents = response.getJSONArray("events");
+                            for (int i = 0; i < pastEvents.length(); i++) {
+                                String event = ( (String) ( (JSONObject) pastEvents.get(i) ).get("strEvent"));
+                                list.add(event);
+                            }
+                            String s = "New upcoming match! ";
+                            for(String event : list){
+                                s = s.concat(event);
+                                s = s.concat("! ");
+                            }
+                            System.out.println(s);
+                            showNotification(s);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                    }
+                }
+                );
+        MySingleton.getInstance(this).addToRequestQueue(request);
+    }
+
+    public void showAllSubcription(){
+
+        Cursor resultSet = mydatabase.rawQuery("SELECT * FROM SubscribedTeam ", null);
+        ArrayList<String> list = new ArrayList<>();
+
+        if (resultSet.getCount() > 0) {
+            resultSet.moveToFirst();
+            int counter = 1;
+            while (!resultSet.isAfterLast()) {
+                String idTeam = resultSet.getString(0);
+                list.add(idTeam);
+                resultSet.moveToNext();
+                counter++;
+            }
+        }
+
+        for(String idTeam : list){
+            String url = String.format("%s?id=%s", "https://www.thesportsdb.com/api/v1/json/1/eventsnext.php", idTeam);
+            fetchData(url);
+        }
+
+    }
+
+    public void createChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("Subscription", "Subcription Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+
+    }
+    //createnotif
+    public void showNotification(String content) {
+
+        createChannel();
+
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 1, intent, 0);
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this,"Subscription");
+        notificationBuilder.setContentTitle("UPCOMING MATCH");
+        notificationBuilder.setContentText(content);
+        notificationBuilder.setSmallIcon(R.drawable.notif);
+        notificationBuilder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        notificationBuilder.setAutoCancel(true);
+        notificationBuilder.setContentIntent(pendingIntent);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        notificationManager.notify(3, notificationBuilder.build());
+
     }
 }
