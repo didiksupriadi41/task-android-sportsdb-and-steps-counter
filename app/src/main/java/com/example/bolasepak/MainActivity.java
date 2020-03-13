@@ -9,6 +9,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     TextView stepCountTV;
     String countedStep;
     CardViewAdapter cardViewAdapter;
+    SQLiteDatabase db;
 
     public static final int LEAGUE_ID = 4328;
     public static final String LEAGUE_NEXT_EVENT_API="https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php";
@@ -68,6 +70,13 @@ public class MainActivity extends AppCompatActivity {
 
         recycler.setLayoutManager(new LinearLayoutManager(this));
         cardViewAdapter = new CardViewAdapter(this);
+
+        // Initialize SQLite data storage.
+        BolaDbHelper dbHelper = new BolaDbHelper(this.getApplicationContext());
+        // Gets the data repository in write mode
+        db = dbHelper.getWritableDatabase();
+
+        // Initialize request queue.
         RequestQueue queue = MySingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
 
@@ -88,6 +97,27 @@ public class MainActivity extends AppCompatActivity {
         mydatabase.execSQL("INSERT INTO SubscribedTeam VALUES(133602);");
 
         showAllSubcription();
+
+
+        Cursor cursor = db.query(
+                BolaContract.PastEntry.TABLE_NAME,   // The table to query
+                null,             // The array of columns to return (pass null to get all)
+                null,              // The columns for the WHERE clause
+                null,          // The values for the WHERE clause
+                null,                   // don't group the rows
+                null,                   // don't filter by row groups
+                null               // The sort order
+        );
+
+        while(cursor.moveToNext()) {
+            long itemId = cursor.getLong(
+                    cursor.getColumnIndexOrThrow(BolaContract.PastEntry.COLUMN_NAME_EVENT_ID));
+            String itemHomeName = cursor.getString(cursor.getColumnIndexOrThrow(BolaContract.PastEntry.COLUMN_NAME_HOME_NAME));
+            String itemAwayName = cursor.getString(cursor.getColumnIndexOrThrow(BolaContract.PastEntry.COLUMN_NAME_AWAY_NAME));
+            System.out.println(cursor.getString(cursor.getColumnIndexOrThrow(BolaContract.PastEntry.COLUMN_NAME_STADIUM)));
+        }
+        cursor.close();
+
     }
 
     private boolean isServiceRunning(Class<?> serviceClass){
@@ -126,18 +156,43 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-
+                            // Initialize values for database insertion.
                             JSONArray pastEvents = response.getJSONArray("events");
                             for (int i = 0; i < pastEvents.length(); i++) {
+                                ContentValues values = new ContentValues();
                                 SoccerMatch match = new SoccerMatch();
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_EVENT_ID,
+                                        Long.parseLong((String) ( (JSONObject) pastEvents.get(i) ).get("idEvent")));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_HOME_ID,
+                                        Long.parseLong((String) ( (JSONObject) pastEvents.get(i) ).get("idHomeTeam")));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_AWAY_ID,
+                                        Long.parseLong((String) ( (JSONObject) pastEvents.get(i) ).get("idAwayTeam")));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_EVENT_DATE,
+                                        (String) ( (JSONObject) pastEvents.get(i) ).get("dateEvent"));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_HOME_NAME,
+                                        (String) ( (JSONObject) pastEvents.get(i) ).get("strHomeTeam"));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_AWAY_NAME,
+                                        (String) ( (JSONObject) pastEvents.get(i) ).get("strAwayTeam"));
+//                                values.put(BolaContract.PastEntry.COLUMN_NAME_HOME_SCORE,
+//                                        (String) ( (JSONObject) pastEvents.get(i) ).get("intHomeScore"));
+//                                values.put(BolaContract.PastEntry.COLUMN_NAME_AWAY_SCORE,
+//                                        (String) ( (JSONObject) pastEvents.get(i) ).get("intAwayScore"));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_HOME_GOAL,
+                                        (String) ( (JSONObject) pastEvents.get(i) ).get("strHomeGoalDetails"));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_AWAY_GOAL,
+                                        (String) ( (JSONObject) pastEvents.get(i) ).get("strAwayGoalDetails"));
                                 match.setName1( (String) ( (JSONObject) pastEvents.get(i) ).get("strHomeTeam"));
                                 match.setName2( (String) ( (JSONObject) pastEvents.get(i) ).get("strAwayTeam"));
-                                match.setScore1( (String) ( (JSONObject) pastEvents.get(i) ).get("intHomeScore"));
-                                match.setScore2( (String) ( (JSONObject) pastEvents.get(i) ).get("intAwayScore"));
-                                jsonLogo1(match, (String) ( (JSONObject) pastEvents.get(i) ).get("idHomeTeam"));
-                                jsonLogo2(match, (String) ( (JSONObject) pastEvents.get(i) ).get("idAwayTeam"));
+                                match.setDateMatch( (String) ( (JSONObject) pastEvents.get(i) ).get("dateEvent"));
+//                                match.setScore1( (String) ( (JSONObject) pastEvents.get(i) ).get("intHomeScore"));
+//                                match.setScore2( (String) ( (JSONObject) pastEvents.get(i) ).get("intAwayScore"));
+                                jsonLogo1(values, match, (String) ( (JSONObject) pastEvents.get(i) ).get("idHomeTeam"));
+                                jsonLogo2(values, match, (String) ( (JSONObject) pastEvents.get(i) ).get("idAwayTeam"));
                                 list.add(match);
+                                long newRowId = db.insertWithOnConflict(BolaContract.PastEntry.TABLE_NAME,
+                                        null, values, SQLiteDatabase.CONFLICT_REPLACE);
                             }
+
                             cardViewAdapter.setListMatch(list);
                             recycler.setAdapter(cardViewAdapter);
                         } catch (JSONException e) {
@@ -152,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                 );
         MySingleton.getInstance(this).addToRequestQueue(request);
     }
-    public void jsonLogo1(final SoccerMatch match, String id) {
+    public void jsonLogo1(final ContentValues values, final SoccerMatch match, String id) {
         String url = "https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=" + id;
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -163,6 +218,11 @@ public class MainActivity extends AppCompatActivity {
                             JSONArray pastEvents = response.getJSONArray("teams");
                             for (int i = 0; i < pastEvents.length(); i++) {
                                 match.setImg1((String) ( (JSONObject) pastEvents.get(i) ).get("strTeamBadge"));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_HOME_BADGE,
+                                        (String) ( (JSONObject) pastEvents.get(i) ).get("strTeamBadge"));
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_STADIUM,
+                                        (String) ( (JSONObject) pastEvents.get(i) ).get("strStadiumLocation"));
+                                System.out.println((String) ( (JSONObject) pastEvents.get(i) ).get("strStadiumLocation"));
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -176,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                 );
         MySingleton.getInstance(this).addToRequestQueue(request);
     }
-    public void jsonLogo2(final SoccerMatch match, String id) {
+    public void jsonLogo2(final ContentValues values, final SoccerMatch match, String id) {
         String url = "https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=" + id;
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -186,6 +246,8 @@ public class MainActivity extends AppCompatActivity {
 
                             JSONArray pastEvents = response.getJSONArray("teams");
                             for (int i = 0; i < pastEvents.length(); i++) {
+                                values.put(BolaContract.PastEntry.COLUMN_NAME_AWAY_BADGE,
+                                        (String) ( (JSONObject) pastEvents.get(i) ).get("strTeamBadge"));
                                 match.setImg2((String) ( (JSONObject) pastEvents.get(i) ).get("strTeamBadge"));
                             }
                         } catch (JSONException e) {
