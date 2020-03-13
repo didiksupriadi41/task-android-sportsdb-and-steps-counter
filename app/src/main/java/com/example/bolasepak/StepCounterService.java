@@ -107,10 +107,12 @@ public class StepCounterService extends Service implements SensorEventListener {
 
     private void createChannel(){
         //create channel
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        NotificationChannel notificationChannel = new NotificationChannel("BOLASEPAK", "Bola Sepak", NotificationManager.IMPORTANCE_DEFAULT);
-        notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
-        notificationManager.createNotificationChannel(notificationChannel);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel notificationChannel = new NotificationChannel("BOLASEPAK", "Bola Sepak", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
     }
 
     private void showNotification() {
@@ -189,7 +191,7 @@ public class StepCounterService extends Service implements SensorEventListener {
             if(intent.getStringExtra("Action").equalsIgnoreCase("STOP_TEST_SERVICE")) {
                 Log.d("Receiver", "STAHPPP");
                 if (isMyServiceRunning(context, StepCounterService.class)) {
-                    Toast.makeText(context,"Service is running!! Stopping...",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context,"Service is running!!",Toast.LENGTH_LONG).show();
                     context.startService(new Intent(context, StepCounterService.class));
                 }
                 else {
