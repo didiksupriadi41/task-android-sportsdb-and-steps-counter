@@ -2,6 +2,7 @@ package com.example.bolasepak;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.LruCache;
 
 import com.android.volley.Request;
@@ -45,6 +46,7 @@ public class MySingleton {
 
     public RequestQueue getRequestQueue() {
         if (requestQueue == null) {
+            Log.d("TEST", "SINGLETON");
             requestQueue = Volley.newRequestQueue(ctx.getApplicationContext());
         }
         return requestQueue;

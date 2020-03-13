@@ -2,7 +2,9 @@
     <string name="app_name">Bola Sepak</string>
     <string name="subscribed">subscribed</string>
     <string name="subscribe">subscribe</string>
+    <string name="search_hint">Search team name</string>
+    <string name="app_label">BolaSepak</string>
+    <string name="api_key">f3e13dd8845782bf2de35d604ead1e30</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

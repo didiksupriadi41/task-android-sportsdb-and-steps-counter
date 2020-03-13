@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import android.app.PendingIntent;
@@ -61,6 +62,7 @@ public class StepCounterService extends Service implements SensorEventListener {
         return null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
         createChannel();
@@ -105,6 +107,7 @@ public class StepCounterService extends Service implements SensorEventListener {
         dismissNotification();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     private void createChannel(){
         //create channel
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

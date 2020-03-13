@@ -33,7 +33,8 @@ public class BolaDbHelper extends SQLiteOpenHelper {
                     BolaContract.NextEntry.COLUMN_NAME_HOME_NAME + " TEXT," +
                     BolaContract.NextEntry.COLUMN_NAME_AWAY_NAME + " TEXT," +
                     BolaContract.NextEntry.COLUMN_NAME_HOME_BADGE + " TEXT," +
-                    BolaContract.NextEntry.COLUMN_NAME_AWAY_BADGE + " TEXT);";
+                    BolaContract.NextEntry.COLUMN_NAME_AWAY_BADGE + " TEXT," +
+                    BolaContract.NextEntry.COLUMN_NAME_STADIUM + " TEXT);";
 
     public static final String SQL_DELETE_PAST =
             "DROP TABLE IF EXISTS " + BolaContract.PastEntry.TABLE_NAME;

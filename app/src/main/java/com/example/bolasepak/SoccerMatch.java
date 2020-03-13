@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class SoccerMatch implements Parcelable {
-    private String name1, name2, dateMatch, score1, score2, img1, img2;
+    private String name1, name2, dateMatch, score1, score2, img1, img2, eventID;
 
     //getter
     public String getName1(){return name1;}
@@ -14,6 +14,7 @@ public class SoccerMatch implements Parcelable {
     public String getScore2(){return score2;}
     public String getImg1(){return img1;}
     public String getImg2(){return img2;}
+    public String getEventID(){return eventID;}
 
     //setter
     public void setName1(String name){this.name1 = name;}
@@ -23,6 +24,7 @@ public class SoccerMatch implements Parcelable {
     public void setScore2(String score){this.score2 = score;}
     public void setImg1(String img){this.img1 = img;}
     public void setImg2(String img){this.img2 = img;}
+    public void setEventID(String event){this.eventID = event;}
 
     @Override
     public int describeContents(){
@@ -38,6 +40,7 @@ public class SoccerMatch implements Parcelable {
         dest.writeString(this.score2);
         dest.writeString(this.img1);
         dest.writeString(this.img2);
+        dest.writeString(this.eventID);
     }
 
     public SoccerMatch(){}
@@ -50,6 +53,7 @@ public class SoccerMatch implements Parcelable {
         this.score2 = in.readString();
         this.img1 = in.readString();
         this.img2 = in.readString();
+        this.eventID = in.readString();
     }
 
     public static final Parcelable.Creator<SoccerMatch> CREATOR = new Parcelable.Creator<SoccerMatch>(){

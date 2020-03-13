@@ -83,8 +83,8 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
                 public void onClick(View view) {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, EventDetail.class);
-                    String teamScore = listSoccerMatch.get(getAdapterPosition()).getScore1();
-                    intent.putExtra("EVENT_ID", teamScore);
+                    String eventID = listSoccerMatch.get(getAdapterPosition()).getEventID();
+                    intent.putExtra("EVENT_ID", eventID);
                     context.startActivity(intent);
                 }
             });
@@ -95,8 +95,8 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
                 public void onClick(View view) {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, EventDetail.class);
-                    String teamScore = listSoccerMatch.get(getAdapterPosition()).getScore1();
-                    intent.putExtra("EVENT_ID", teamScore);
+                    String eventID = listSoccerMatch.get(getAdapterPosition()).getEventID();
+                    intent.putExtra("EVENT_ID", eventID);
                     context.startActivity(intent);
                 }
             });
@@ -107,8 +107,8 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
                 public void onClick(View view) {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, EventDetail.class);
-                    String teamScore = listSoccerMatch.get(getAdapterPosition()).getScore1();
-                    intent.putExtra("EVENT_ID", teamScore);
+                    String eventID = listSoccerMatch.get(getAdapterPosition()).getEventID();
+                    intent.putExtra("EVENT_ID", eventID);
                     context.startActivity(intent);
                 }
             });

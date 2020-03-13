@@ -24,7 +24,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.squareup.picasso.Picasso;
 
 public class TeamDetail extends AppCompatActivity {
-    private SQLiteDatabase mydatabase;
+    private SQLiteDatabase mydatabase, boladb;
     private String team_id;
     private PagerAdapter pagerAdapter;
     private ViewPager mPager;
@@ -33,11 +33,10 @@ public class TeamDetail extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_detail);
-        this.team_id = "12345";
-        loadData();
 
         Intent intent = getIntent();
-//        String id = intent.getStringExtra("TEAM_ID");
+        team_id = intent.getStringExtra("TEAM_ID");
+        loadData();
 
         mydatabase = openOrCreateDatabase("Team",MODE_PRIVATE,null);
         mydatabase.execSQL("CREATE TABLE IF NOT EXISTS SubscribedTeam(Team_ID VARCHAR);");
@@ -63,12 +62,17 @@ public class TeamDetail extends AppCompatActivity {
     }
 
     private void loadData() {
-        Picasso.get()
-                .load("https://www.thesportsdb.com/images/media/team/badge/a1af2i1557005128.png")
-                .into((ImageView) findViewById(R.id.teamLogo));
+        boladb = openOrCreateDatabase("Bola.db",MODE_PRIVATE,null);
+        Cursor resultSet = boladb.rawQuery("SELECT * FROM past WHERE homeID = ?", new String[] {team_id}); //need to change query
+        Log.d("TAGGGG", team_id);
         TextView name = (TextView) findViewById(R.id.teamName);
-        name.setText("Arsenal");
+        resultSet.moveToFirst();
+        name.setText(resultSet.getString(4));
+        Picasso.get()
+                .load(resultSet.getString(6))
+                .into((ImageView) findViewById(R.id.teamLogo));
 
+        //cek database
     }
 
     public void editSubscribedTeam(View view) {
@@ -110,5 +114,9 @@ public class TeamDetail extends AppCompatActivity {
             btn.setBackgroundColor(ContextCompat.getColor(TeamDetail.this,R.color.colorPrimary));
             btn.setText(R.string.subscribe);
         }
+    }
+
+    public String sendTeamID(){
+        return team_id;
     }
 }

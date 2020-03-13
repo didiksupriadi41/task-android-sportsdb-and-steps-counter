@@ -33,5 +33,6 @@ public final class BolaContract {
         public static final String COLUMN_NAME_AWAY_NAME = "awayName";
         public static final String COLUMN_NAME_HOME_BADGE = "homeBadge";
         public static final String COLUMN_NAME_AWAY_BADGE = "awayBadge";
+        public static final String COLUMN_NAME_STADIUM = "stadium";
     }
 }
