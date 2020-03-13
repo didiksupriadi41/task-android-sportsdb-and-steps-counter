@@ -5,17 +5,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.content.res.Configuration;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -31,8 +34,9 @@ import java.util.Calendar;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -67,8 +71,14 @@ public class MainActivity extends AppCompatActivity {
 
         recycler = findViewById(R.id.recycler_view);
         recycler.setHasFixedSize(true);
-
         recycler.setLayoutManager(new LinearLayoutManager(this));
+
+        int orientation = getResources().getConfiguration().orientation; //check whether is it portrait or landscape
+        int col = 1;
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            col = 2;
+        }
+        recycler.setLayoutManager(new GridLayoutManager(this, col));
         cardViewAdapter = new CardViewAdapter(this);
 
         // Initialize SQLite data storage.
@@ -95,7 +105,6 @@ public class MainActivity extends AppCompatActivity {
         mydatabase = openOrCreateDatabase("Team",MODE_PRIVATE,null);
         mydatabase.execSQL("CREATE TABLE IF NOT EXISTS SubscribedTeam(Team_ID VARCHAR);");
         mydatabase.execSQL("INSERT INTO SubscribedTeam VALUES(133602);");
-
         showAllSubcription();
 
 
@@ -156,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            // Initialize values for database insertion.
+
                             JSONArray pastEvents = response.getJSONArray("events");
                             for (int i = 0; i < pastEvents.length(); i++) {
                                 ContentValues values = new ContentValues();
@@ -262,8 +271,7 @@ public class MainActivity extends AppCompatActivity {
                 );
         MySingleton.getInstance(this).addToRequestQueue(request);
     }
-
-    public void fetchData(String url){
+        public void fetchData(String url){
         final ArrayList<String> list = new ArrayList<>();
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
