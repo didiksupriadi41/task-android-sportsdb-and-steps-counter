@@ -1,12 +1,10 @@
 package com.example.bolasepak;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Callback;
@@ -76,42 +74,9 @@ public class CardViewAdapter extends RecyclerView.Adapter<CardViewAdapter.MyView
             score1 = itemView.findViewById(R.id.score1);
             score2 = itemView.findViewById(R.id.score2);
             datematch = itemView.findViewById(R.id.dateMatch);
-            LinearLayout ll = (LinearLayout) itemView.findViewById(R.id.linearLayout);
-            ll.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View view) {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, EventDetail.class);
-                    String teamScore = listSoccerMatch.get(getAdapterPosition()).getScore1();
-                    intent.putExtra("EVENT_ID", teamScore);
-                    context.startActivity(intent);
-                }
-            });
-            LinearLayout ll2 = (LinearLayout) itemView.findViewById(R.id.linearLayout2);
-            ll2.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View view) {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, EventDetail.class);
-                    String teamScore = listSoccerMatch.get(getAdapterPosition()).getScore1();
-                    intent.putExtra("EVENT_ID", teamScore);
-                    context.startActivity(intent);
-                }
-            });
-            LinearLayout ll3 = (LinearLayout) itemView.findViewById(R.id.linearLayout3);
-            ll3.setOnClickListener(new View.OnClickListener() {
-
-                @Override
-                public void onClick(View view) {
-                    Context context = view.getContext();
-                    Intent intent = new Intent(context, EventDetail.class);
-                    String teamScore = listSoccerMatch.get(getAdapterPosition()).getScore1();
-                    intent.putExtra("EVENT_ID", teamScore);
-                    context.startActivity(intent);
-                }
-            });
         }
     }
+
+
 }
