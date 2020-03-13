@@ -4,9 +4,16 @@
     package="com.example.bolasepak">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" tools:remove="android:maxSdkVersion" android:required="true"/>
-    <uses-feature android:name="android.hardware.sensor.stepcounter" android:required="true"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission
+        android:name="android.permission.ACTIVITY_RECOGNITION"
+        android:required="true"
+        tools:remove="android:maxSdkVersion" />
+
+    <uses-feature
+        android:name="android.hardware.sensor.stepcounter"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -15,7 +22,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" android:configChanges="orientation">
+        <activity android:name=".TeamDetail"></activity>
+        <activity android:name=".EventDetail" />
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,8 +34,11 @@
             </intent-filter>
         </activity>
 
+        <service
+            android:name=".StepCounterService"
+            android:enabled="true"
+            android:exported="true" />
 
-        <service android:name=".StepCounterService" android:enabled="true" android:exported="true"> </service>
         <receiver android:name=".ActionReceiver" />
     </application>
 

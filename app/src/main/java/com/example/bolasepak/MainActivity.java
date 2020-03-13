@@ -11,6 +11,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,8 +25,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -59,7 +60,12 @@ public class MainActivity extends AppCompatActivity {
         recycler = findViewById(R.id.recycler_view);
         recycler.setHasFixedSize(true);
 
-        recycler.setLayoutManager(new LinearLayoutManager(this));
+        int orientation = getResources().getConfiguration().orientation; //check whether is it portrait or landscape
+        int col = 1;
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE){
+            col = 2;
+        }
+        recycler.setLayoutManager(new GridLayoutManager(this, col));
         cardViewAdapter = new CardViewAdapter(this);
         RequestQueue queue = MySingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
