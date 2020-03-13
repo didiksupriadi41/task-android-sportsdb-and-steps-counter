@@ -16,16 +16,13 @@ public class BolaDbHelper extends SQLiteOpenHelper {
                     BolaContract.PastEntry.COLUMN_NAME_EVENT_DATE + " TEXT," +
                     BolaContract.PastEntry.COLUMN_NAME_HOME_NAME + " TEXT," +
                     BolaContract.PastEntry.COLUMN_NAME_AWAY_NAME + " TEXT," +
-                    BolaContract.PastEntry.COLUMN_NAME_HOME_NAME + " TEXT," +
-                    BolaContract.PastEntry.COLUMN_NAME_AWAY_NAME + " TEXT," +
                     BolaContract.PastEntry.COLUMN_NAME_HOME_BADGE + " TEXT," +
                     BolaContract.PastEntry.COLUMN_NAME_AWAY_BADGE + " TEXT," +
                     BolaContract.PastEntry.COLUMN_NAME_HOME_SCORE + " TEXT," +
                     BolaContract.PastEntry.COLUMN_NAME_AWAY_SCORE + " TEXT," +
-                    BolaContract.PastEntry.COLUMN_NAME_HOME_SCORE + " TEXT," +
-                    BolaContract.PastEntry.COLUMN_NAME_AWAY_SCORE + " TEXT," +
-                    BolaContract.PastEntry.COLUMN_NAME_HOME_SCORE + " TEXT," +
-                    BolaContract.PastEntry.COLUMN_NAME_AWAY_SCORE + " TEXT);";
+                    BolaContract.PastEntry.COLUMN_NAME_HOME_GOAL + " TEXT," +
+                    BolaContract.PastEntry.COLUMN_NAME_AWAY_GOAL + " TEXT," +
+                    BolaContract.PastEntry.COLUMN_NAME_STADIUM + " TEXT);";
 
     public static final String SQL_CREATE_NEXT =
             "CREATE TABLE " + BolaContract.NextEntry.TABLE_NAME + " (" +
@@ -33,8 +30,6 @@ public class BolaDbHelper extends SQLiteOpenHelper {
                     BolaContract.NextEntry.COLUMN_NAME_HOME_ID + " INTEGER," +
                     BolaContract.NextEntry.COLUMN_NAME_AWAY_ID + " INTEGER," +
                     BolaContract.NextEntry.COLUMN_NAME_EVENT_DATE + " TEXT," +
-                    BolaContract.NextEntry.COLUMN_NAME_HOME_NAME + " TEXT," +
-                    BolaContract.NextEntry.COLUMN_NAME_AWAY_NAME + " TEXT," +
                     BolaContract.NextEntry.COLUMN_NAME_HOME_NAME + " TEXT," +
                     BolaContract.NextEntry.COLUMN_NAME_AWAY_NAME + " TEXT," +
                     BolaContract.NextEntry.COLUMN_NAME_HOME_BADGE + " TEXT," +
@@ -63,7 +58,8 @@ public class BolaDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(SQL_CREATE_ENTRIES);
+        sqLiteDatabase.execSQL(SQL_CREATE_PAST);
+        sqLiteDatabase.execSQL(SQL_CREATE_NEXT);
     }
 
     @Override
