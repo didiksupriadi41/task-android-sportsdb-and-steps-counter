@@ -20,8 +20,7 @@ public final class BolaContract {
         public static final String COLUMN_NAME_AWAY_SCORE = "awayScore";
         public static final String COLUMN_NAME_HOME_GOAL = "homeGoal";
         public static final String COLUMN_NAME_AWAY_GOAL = "awayGoal";
-        public static final String COLUMN_NAME_HOME_GOAL_DETAIL = "homeGoalDetail";
-        public static final String COLUMN_NAME_AWAY_GOAL_DETAIL = "awayGoalDetail";
+        public static final String COLUMN_NAME_STADIUM = "stadium";
     }
 
     public static class NextEntry implements BaseColumns {
