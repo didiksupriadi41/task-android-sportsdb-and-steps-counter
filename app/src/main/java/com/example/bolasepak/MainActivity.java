@@ -67,8 +67,8 @@ public class MainActivity extends AppCompatActivity {
     SQLiteDatabase db;
 
     public static final int LEAGUE_ID = 4328;
-    public static final String LEAGUE_NEXT_EVENT_API = "https://www.thesportsdb.com/api/v1/json/1/eventsnextleague.php";
-    public static final String LEAGUE_PAST_EVENT_API = "https://www.thesportsdb.com/api/v1/json/1/eventspastleague.php";
+    public static final String LEAGUE_NEXT_EVENT_API = "http://134.209.97.218:5050/api/v1/json/1/eventsnextleague.php";
+    public static final String LEAGUE_PAST_EVENT_API = "http://134.209.97.218:5050/api/v1/json/1/eventspastleague.php";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -305,7 +305,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void jsonLogo1(final ContentValues values, final SoccerMatch match, String id) {
-        String url = "https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=" + id;
+        String url = "http://134.209.97.218:5050/api/v1/json/1/lookupteam.php?id=" + id;
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void jsonLogo2(final ContentValues values, final SoccerMatch match, String id) {
-        String url = "https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=" + id;
+        String url = "http://134.209.97.218:5050/api/v1/json/1/lookupteam.php?id=" + id;
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -416,7 +416,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (String idTeam : list) {
-            String url = String.format("%s?id=%s", "https://www.thesportsdb.com/api/v1/json/1/eventsnext.php", idTeam);
+            String url = String.format("%s?id=%s", "http://134.209.97.218:5050/api/v1/json/1/eventsnext.php", idTeam);
             fetchData(url);
         }
 
@@ -494,7 +494,7 @@ public class MainActivity extends AppCompatActivity {
         MySingleton.getInstance(this).addToRequestQueue(request);
     }
     public void jsonNextLogo1(final ContentValues values, String id) {
-        String url = "https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=" + id;
+        String url = "http://134.209.97.218:5050/api/v1/json/1/lookupteam.php?id=" + id;
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -527,7 +527,7 @@ public class MainActivity extends AppCompatActivity {
         MySingleton.getInstance(this).addToRequestQueue(request);
     }
     public void jsonNextLogo2(final ContentValues values, String id) {
-        String url = "https://www.thesportsdb.com/api/v1/json/1/lookupteam.php?id=" + id;
+        String url = "http://134.209.97.218:5050/api/v1/json/1/lookupteam.php?id=" + id;
         JsonObjectRequest request = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
